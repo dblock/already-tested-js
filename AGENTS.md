@@ -2,6 +2,24 @@
 
 Read [Contributing](CONTRIBUTING.md) and [Design](DESIGN.md) before editing. This project trusts content-matched local-test claims in PR descriptions to avoid duplicate CI. It does not prove execution, sign evidence, run tests for callers, or operate a remote service.
 
+## Local CI Claims
+
+This repository uses its committed local Action in Test, Lint, and Package. After the required local validation passes, commit exactly those files, then use `node bin/already-tested.js claim` from the clean checkout and paste each complete generated section into the PR description. Default to all tracked files, matching CI; do not pass file filters here. Regenerate claims after any tracked file changes.
+
+Use the default compact disclosure format: one expandable summary per check, no outer bullets or blank separators between sections, a tight bulleted list of validation details inside, and the canonical machine-readable claim hidden inline beside the visible content SHA-256. Do not wrap the claim in a code block or add a visible machine-readable-claim label. Supply `--command` with the complete command actually validated, `--environment` with its actual Node version and OS, and optionally `--summary` with a concise passed-check label. These are trusted descriptions, not execution evidence; never infer or invent them. `--raw` is only for tools needing the old single-comment output, not normal PR descriptions.
+
+Claim only complete checks actually run successfully, not focused tests or another matrix environment. Test IDs are `test-node24-ubuntu-latest`, `test-node26-ubuntu-latest`, `test-node26-macos-latest`, and `test-node26-windows-latest`; use only the Node major and OS family actually tested. Portable lint uses `lint-node26` after `npm run lint` on Node.js 26. Portable package checks use `package-node24` or `package-node26` after `npm run package:check` on that Node major, with the rebuilt bundle committed and no remaining bundle diff.
+
+For example, after running full coverage tests on Node.js 26 on macOS, committing the validated source, and leaving no tracked changes:
+
+```sh
+node bin/already-tested.js claim --workflow .github/workflows/test.yml --check test-node26-macos-latest \
+  --command 'npm run test:coverage' --environment 'Node.js 26 on macOS' \
+  --summary 'Test: Node.js 26 on macOS - passed'
+```
+
+See [Local CI Claims](CONTRIBUTING.md#local-ci-claims) for all workflow/command mappings. Never claim Linux or Windows test legs from macOS. Claims are trusted statements; do not invent, copy stale, or manually alter them. Missing claims run CI normally; default-branch pushes always run all checks.
+
 ## Implementation and Tests
 
 Keep shared claim logic under `src/`, the CLI under `bin/`, behavior tests under `test/`, and validation utilities under `scripts/`. `action.yml` runs committed `dist/action.cjs`, rebuilt with `npm run build`. Use public dependency APIs and supported Node.js APIs. The Action targets Node.js 24; consumers support Node.js 24 and 26 or later; development uses Node.js 26 LTS.

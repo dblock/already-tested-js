@@ -14,6 +14,7 @@ JSON
 LCOV
 LTS
 Markdown
+NUL
 OIDC
 PR
 PR's
@@ -42,6 +43,7 @@ hashes
 hashing
 js
 lockfile
+macOS
 metadata
 newline
 nonempty

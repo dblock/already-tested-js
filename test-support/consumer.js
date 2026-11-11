@@ -15,7 +15,26 @@ export function exerciseConsumer({ library, cli, action }) {
     assert.ifError(generated.error);
     assert.equal(generated.status, 0, generated.stderr);
     const claim = generated.stdout.trimEnd();
-    assert.equal(claim, library.createClaim({ cwd: repo.cwd, workflow, check: "unit" }));
+    const canonical = library.createClaim({ cwd: repo.cwd, workflow, check: "unit" });
+    assert.match(claim, /^<details>\n<summary>unit - passed<\/summary>\n\n/u);
+    assert.ok(claim.endsWith("\n</details>"));
+    assert.ok(claim.includes("` " + canonical));
+    assert.ok(!claim.includes("**Ran:**"));
+    assert.ok(!claim.includes("**Environment:**"));
+    const detailed = spawnSync(process.execPath, [
+      cli, "claim", "--workflow", workflow, "--check", "unit",
+      "--summary", "Local <tests> & checks", "--command", "npm test",
+      "--environment", "Node.js on the local host",
+    ], { cwd: repo.cwd, encoding: "utf8" });
+    assert.equal(detailed.status, 0, detailed.stderr);
+    assert.match(detailed.stdout, /<summary>Local &lt;tests&gt; &amp; checks<\/summary>/u);
+    assert.ok(detailed.stdout.includes("- **Ran:** ` npm test `"));
+    assert.equal(library.verifyClaim({ cwd: repo.cwd, workflow, check: "unit", body: detailed.stdout }), true);
+    const raw = spawnSync(process.execPath, [
+      cli, "claim", "--workflow", workflow, "--check", "unit", "--raw",
+    ], { cwd: repo.cwd, encoding: "utf8" });
+    assert.equal(raw.status, 0, raw.stderr);
+    assert.equal(raw.stdout, `${canonical}\n`);
     assert.equal(library.verifyClaim({ cwd: repo.cwd, workflow, check: "unit", body: claim }), true);
     const ref = repo.git(["rev-parse", "HEAD"]);
     repo.git(["switch", "-q", "master"]);

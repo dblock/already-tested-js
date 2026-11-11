@@ -3,8 +3,12 @@ on:
   push:
     branches: [master]
   pull_request:
+    types: [opened, synchronize, reopened, edited]
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 jobs:
   test:
     name: Test on Node.js ${{ matrix.entry.node }} (${{ matrix.entry.os }})
@@ -21,18 +25,27 @@ jobs:
       - name: Check Out Source
         uses: actions/checkout@v7.0.1
         with:
+          fetch-depth: 2
           persist-credentials: false
+      - name: Check Local CI Claim
+        uses: ./
+        id: local
+        with:
+          check: test-node${{ matrix.entry.node }}-${{ matrix.entry.os }}
       - name: Set Up Node.js
+        if: steps.local.outputs.skip != 'true'
         uses: actions/setup-node@v7.1.0
         with:
           node-version: ${{ matrix.entry.node }}
           cache: npm
       - name: Install Dependencies
+        if: steps.local.outputs.skip != 'true'
         run: npm ci
       - name: Run Tests with Coverage
+        if: steps.local.outputs.skip != 'true'
         run: npm run test:coverage
       - name: Upload Coverage
-        if: matrix.entry.node == '26' && matrix.entry.os == 'ubuntu-latest'
+        if: steps.local.outputs.skip != 'true' && matrix.entry.node == '26' && matrix.entry.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@v2.3.8
         with:
           github-token: ${{ github.token }}

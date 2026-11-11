@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import process from "node:process";
 import { test } from "node:test";
@@ -38,14 +39,42 @@ test("CLI help, version, required options, and parse failures have useful exit c
     "--files", "src/**", "--files", "README.md"];
   const claim = run(args);
   assert.equal(claim.status, 0, claim.stderr);
-  assert.equal(claim.stdout.trimEnd(), library.createClaim({
+  assert.ok(claim.stdout.includes(library.createClaim({
     cwd: repo.cwd, workflow, check: "unit", files: ["README.md", "src/**"],
-  }));
+  })));
   assert.equal(run(args, resolve(repo.cwd, "src")).stdout, claim.stdout);
   repo.write("README.md", "Dirty");
   const dirty = run(args);
   assert.equal(dirty.status, 1);
   assert.match(dirty.stderr, /Commit tracked changes/u);
+});
+
+test("CLI display metadata stays inert and rejects multiline or incompatible input", (t) => {
+  const repo = repository();
+  t.after(repo.cleanup);
+  const args = ["claim", "--workflow", workflow, "--check", "unit"];
+  const run = (extra) => spawnSync(process.execPath, [cli, ...args, ...extra], {
+    cwd: repo.cwd, encoding: "utf8",
+  });
+  const command = "node -e \"require('node:fs').writeFileSync('executed', 'bad')\"";
+  const result = run(["--command", command, "--environment", "<host> & `tools`"]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.ok(!existsSync(resolve(repo.cwd, "executed")));
+  assert.ok(result.stdout.includes("` " + command + " `"));
+  assert.ok(result.stdout.includes("`` <host> & `tools` ``"));
+  assert.ok(result.stdout.includes("- **Commit:** ` " + repo.git(["rev-parse", "HEAD"]) + " `"));
+  for (const option of ["--summary", "--command", "--environment"]) {
+    for (const value of ["", "  ", "first\nsecond", "first\rsecond"]) {
+      const invalid = run([option, value]);
+      assert.equal(invalid.status, 1);
+      assert.equal(invalid.stdout, "");
+      assert.match(invalid.stderr, /nonempty single-line/u);
+    }
+    const incompatible = run(["--raw", option, "metadata"]);
+    assert.equal(incompatible.status, 1);
+    assert.equal(incompatible.stdout, "");
+    assert.match(incompatible.stderr, /--raw cannot be combined/u);
+  }
 });
 
 test("Action respects newline-separated filters and check identity", (t) => {

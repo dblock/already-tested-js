@@ -8,7 +8,7 @@ Avoid repeating tests that an agent claims to have passed locally against identi
 
 One ESM npm package provides the `already-tested` executable, shared hashing code under `src/`, and a bundled JavaScript GitHub Action declared by `action.yml`. The committed `dist/action.cjs` needs no dependency installation. The Action uses Node.js 24, GitHub's latest supported JavaScript Action runtime; the CLI supports Node.js 24 and 26 or later. Develop on Node.js 26 LTS. Git 2.29 or later must be available.
 
-The CLI command is `already-tested claim --workflow <path> --check <identifier>`, with optional repeated `--files <pattern>` options. It generates a machine-readable claim after the agent has tested the exact committed source. It does not execute tests, post to GitHub, or require GitHub credentials.
+The CLI command is `already-tested claim --workflow <path> --check <identifier>`, with optional repeated `--files <pattern>` options. It generates an expandable PR-description section containing a hidden machine-readable claim after the agent has tested the exact committed source. It does not execute tests, post to GitHub, or require GitHub credentials.
 
 The Action takes a required `check` identifier and optional newline-separated `files` patterns. It identifies the executing workflow using `GITHUB_WORKFLOW_REF` and `GITHUB_WORKFLOW_SHA`, reads the PR description/head from the event payload, and emits the string output `skip`, either `true` or `false`. The enclosing workflow uses this output in conditions on expensive steps or dependent jobs. An Action cannot skip its already-running enclosing workflow, and downstream job results must not hide a failed verifier.
 
@@ -16,7 +16,11 @@ The Action takes a required `check` identifier and optional newline-separated `f
 
 Run the CLI from any directory inside the target checkout. Workflow paths and file patterns are relative to the repository root. `--workflow` must name a tracked file directly under `.github/workflows/` ending in `.yml` or `.yaml`. A check identifier has 1-128 ASCII letters, numbers, periods, underscores, colons, slashes, or hyphens, beginning with a letter or number.
 
-Print one claim line to stdout with a final newline, no progress logs, and exit zero. Errors print to stderr, exit one, and produce no claim. `--help` or no arguments prints usage without requiring a repository; `--version` alone prints the package version and cannot be combined with any other argument.
+Print one complete `details` section to stdout with a final newline, no progress logs, and exit zero. Each section has one expandable summary, no outer bullet, a tight bulleted list of details, and the canonical comment hidden inline on the content SHA-256 bullet. Concatenating outputs adds no blank separators; GitHub controls disclosure margins. The summary defaults to `<check> - passed`; workflow, check, commit, and visible content SHA-256 are always included.
+
+Optional `--summary`, `--command`, and `--environment` provide the display label, command actually validated, and environment actually validated. Commands are never executed, environments are not inferred, and omitted metadata stays omitted. These nonempty, single-line values cannot contain NUL characters. Escape summary HTML and use safe inline code delimiters for detail values. Metadata is trusted presentation, not an extra hash input or independent validation.
+
+`--raw` prints only the original canonical comment and cannot be combined with display metadata. The JavaScript `createClaim` API still returns that canonical comment. Errors print to stderr, exit one, and produce no claim. `--help` or no arguments prints usage without requiring a repository; `--version` alone prints the package version and cannot be combined with any other argument.
 
 Claims are single-line HTML comments, pasted verbatim. This example uses an illustrative checksum:
 
@@ -65,6 +69,14 @@ Trigger on PR source and description changes, including `opened`, `synchronize`,
 
 Use a distinct `check` value per job or matrix environment and copy the same value into the CLI invocation. A claim is only as good as its selected inputs and trusted author. Hashes do not capture unselected files, external state, installed toolchains, test commands outside selected files, or service configuration. The Action does not authenticate the claimant, prevent a trusted author from lying, or prove integration with a newer base passes. Preserve checks that local claims cannot replace. Do not use this as a security boundary or as a substitute for branch protection.
 
+## This Repository's CI
+
+Test, Lint, and Package use `uses: ./` to execute the committed bundle after checkout with depth 2, before runtime setup or dependency installation. They use all tracked files, support PR-description edits, and cancel obsolete runs for the same PR without grouping independent push runs. A matching claim skips setup and the corresponding validation steps; missing/stale claims and all pushes execute normal CI.
+
+Each Test matrix leg has a `test-node<NODE>-<OS>` identity and requires local validation on that Node major and OS family. Portable Lint uses `lint-node26`; portable Package uses `package-node24` or `package-node26` and includes its committed-bundle check. [Contributor instructions](CONTRIBUTING.md#local-ci-claims) map identities to complete local validation commands. A local macOS Test run does not replace Linux or Windows tests.
+
+Coveralls uploads remain restricted to actual Node.js 26 Linux test runs, not jobs whose tests were skipped. Claim-based skips do not upload local coverage or manufacture a coverage report. The integration uses no release tag, registry publication, extra permission, or runtime dependency.
+
 ## JavaScript API
 
 ```js
@@ -91,7 +103,7 @@ Use esbuild for bundling, the built-in Node.js test runner with c8 coverage, ESL
 
 ## Non-goals
 
-No signing, independent execution proof, test-runner adapters, automatic test selection, remote service, registry credentials, automated PR editing, or claim-based skipping for this project's own CI.
+No signing, independent execution proof, test-runner adapters, automatic test selection, remote service, registry credentials, or automated PR editing.
 
 ## Artwork
 

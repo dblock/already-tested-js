@@ -3,8 +3,12 @@ on:
   push:
     branches: [master]
   pull_request:
+    types: [opened, synchronize, reopened, edited]
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 jobs:
   package:
     name: Validate Package on Node.js ${{ matrix.entry.node }}
@@ -18,15 +22,25 @@ jobs:
       - name: Check Out Source
         uses: actions/checkout@v7.0.1
         with:
+          fetch-depth: 2
           persist-credentials: false
+      - name: Check Local CI Claim
+        uses: ./
+        id: local
+        with:
+          check: package-node${{ matrix.entry.node }}
       - name: Set Up Node.js
+        if: steps.local.outputs.skip != 'true'
         uses: actions/setup-node@v7.1.0
         with:
           node-version: ${{ matrix.entry.node }}
           cache: npm
       - name: Install Dependencies
+        if: steps.local.outputs.skip != 'true'
         run: npm ci
       - name: Validate Packed Consumer
+        if: steps.local.outputs.skip != 'true'
         run: npm run package:check
       - name: Verify Committed Bundle
+        if: steps.local.outputs.skip != 'true'
         run: git diff --exit-code -- dist/

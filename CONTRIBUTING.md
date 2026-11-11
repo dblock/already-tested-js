@@ -20,6 +20,43 @@ Git 2.29 or later is required. Fixtures live under `test-support/` and clean up 
 
 Keep `.github/workflows/test.yml`, `lint.yml`, and `package.yml` separate. Use explicit `matrix.entry` lists of compact inline objects, not generated axes or matrix include/exclude. Test the consumer runtime floor and latest LTS, relevant operating systems, and actual packed entry points. Maintain Coveralls reporting in the test workflow.
 
+## Local CI Claims
+
+This repository runs its own committed Action before installing dependencies. Add claims only after the complete local validation command passed, then commit exactly that tested source and generate claims from a clean checkout. Use the repository CLI directly; no published package or global installation is needed.
+
+| Workflow | Check Identifier | Local Validation |
+| --- | --- | --- |
+| `.github/workflows/test.yml` | `test-node<NODE>-<OS>` | `npm run test:coverage` on the matching matrix Node major and OS family |
+| `.github/workflows/lint.yml` | `lint-node26` | `npm run lint` on Node.js 26; portable across operating systems |
+| `.github/workflows/package.yml` | `package-node<NODE>` | `npm run package:check` on Node.js 24 or 26; portable across operating systems |
+
+The Test matrix IDs are `test-node24-ubuntu-latest`, `test-node26-ubuntu-latest`, `test-node26-macos-latest`, and `test-node26-windows-latest`. Do not claim another OS family or Node major, and do not claim a full job after running focused tests. Package validation must include the actual archive and leave the rebuilt bundle committed with no remaining `git diff --exit-code -- dist/`.
+
+For example, after validating Test and Lint on Node.js 26 on macOS, commit the tested source, then generate:
+
+```sh
+node bin/already-tested.js claim --workflow .github/workflows/test.yml --check test-node26-macos-latest \
+  --command 'npm run test:coverage' --environment 'Node.js 26 on macOS' \
+  --summary 'Test: Node.js 26 on macOS - passed'
+node bin/already-tested.js claim --workflow .github/workflows/lint.yml --check lint-node26 \
+  --command 'npm run lint' --environment 'Node.js 26 on macOS' \
+  --summary 'Lint: Node.js 26 - passed'
+```
+
+After package validation on a particular Node major, generate the corresponding claim:
+
+```sh
+node bin/already-tested.js claim --workflow .github/workflows/package.yml --check package-node26 \
+  --command 'npm run package:check && git diff --exit-code -- dist/' \
+  --environment 'Node.js 26 on macOS' --summary 'Package: Node.js 26 - passed'
+```
+
+Paste each entire generated section into the PR description, directly adjacent without blank separators or outer bullets. The default output has an expandable summary and a tight bulleted list of command, environment, workflow, check, commit, and visible content SHA-256. Its canonical claim stays hidden inline beside that hash; do not add a visible label or code block for it. GitHub controls the remaining disclosure spacing.
+
+Record only the command and environment actually validated; the CLI neither runs nor infers them. Omitted metadata is omitted from the section, not invented. `--summary` overrides the default `<check> - passed` label. `--raw` retains the single-comment format for machine consumers and cannot be combined with display metadata. Display metadata is trusted prose, not an additional hash input or proof of execution.
+
+Omit file filters: CI uses all tracked files, including its workflow. Regenerate after any tracked file changes. The workflow/check identity prevents sharing a claim between jobs. PR-description edits trigger new verification; obsolete PR runs are cancelled. Unclaimed checks and all default-branch push checks run normally. Coverage uploads occur only when the corresponding CI tests ran.
+
 ## Pull Requests
 
 Read [Design](DESIGN.md) and [Agent Instructions](AGENTS.md). Work on topic branches from `master` named `<username>/<topic>`, such as `dblock/implementation`, in the existing checkout. Use worktrees only for parallel tasks, with unused paths and distinct branches. Inspect status and existing worktrees before switching; preserve unrelated changes.
