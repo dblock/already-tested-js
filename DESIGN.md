@@ -109,7 +109,17 @@ No signing, independent execution proof, test-runner adapters, automatic test se
 
 The approved Rubber Stamp concept is original editable SVG artwork in `assets/logo.svg`, covered by the project's [MIT license](LICENSE). No third-party artwork or embedded font files are used. The green ink, broken double-ring border, tilted lettering, and check mark represent a trusted claim that work was already done, not an independent certification.
 
-Edit the SVG source directly. Preserve its accessible title/description, transparent background, system-font fallback, and generous outer margin. Keep it first in README, above the title and badges, using an image with descriptive alternative text and a 160-pixel display width. Include the SVG in the npm archive so packaged README images resolve.
+Edit the SVG source directly. Preserve its accessible title/description, transparent background, system-font fallback, and generous outer margin. Keep it first in README, above the title and badges, using an image with descriptive alternative text and a 160-pixel display width. Include the artwork in the npm archive so packaged README images resolve.
+
+The animated variation adds an original transparent green outline stamper in `assets/stamp.svg`, also covered by MIT. It uses the logo's ink color, simple unfilled paths, and no gradients or shading. `scripts/render-logo.js` composes both SVG sources into `assets/logo-animated.gif`: the logo stays at its original position and scale throughout, while only the stamper quickly lifts up and away, returns for a brief press, then exits. There is no unfolding, stretching, fading, or movement of the green logo. Motion finishes in under a second; the transparent, 320-pixel GIF plays once and stays on the original logo rather than looping. README uses a `picture` element to serve the original SVG when reduced motion is requested.
+
+Regenerate locally with Node.js 26, `rsvg-convert` from `librsvg`, and FFmpeg; these are optional artwork tools, not runtime or CI dependencies:
+
+```sh
+node scripts/render-logo.js
+```
+
+The renderer creates temporary frames outside the checkout and removes them after encoding. Review the GIF at full size and README width, including the initial stamp, contact, lift, and final mark on light and dark backgrounds. Check that it plays only once, has no trails or clipping, and ends on the original logo. Preserve the renderer, both editable SVG sources, and the GIF together; normal installation and CI use the committed asset and do not regenerate it.
 
 Create temporary previews with `rsvg-convert` from `librsvg`:
 

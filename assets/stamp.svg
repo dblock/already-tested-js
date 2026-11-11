@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="stamp-title stamp-description">
+  <title id="stamp-title">Rubber Stamp Outline</title>
+  <desc id="stamp-description">A transparent green outline of a rubber stamper with a rounded handle and a flat base.</desc>
+  <g transform="rotate(-9 128 128)" fill="none" stroke="#19734d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 106 145 C 116 123 117 107 111 91 C 100 85 94 72 94 58 C 94 38 108 25 128 25 C 148 25 162 38 162 58 C 162 72 156 85 145 91 C 139 107 140 123 150 145"/>
+    <path d="M 57 145 H 199 L 215 178 H 41 Z"/>
+    <path d="M 41 178 V 193 H 215 V 178"/>
+  </g>
+</svg>

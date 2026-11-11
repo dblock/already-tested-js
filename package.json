@@ -18,6 +18,8 @@
   "files": [
     "action.yml",
     "assets/logo.svg",
+    "assets/logo-animated.gif",
+    "assets/stamp.svg",
     "bin/",
     "dist/",
     "src/",

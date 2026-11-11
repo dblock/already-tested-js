@@ -42,7 +42,7 @@ Update affected documentation and keep Design focused on current behavior and re
 
 ## Artwork
 
-Preserve the original editable `assets/logo.svg`, its MIT license, and its accessible title/description. Keep the logo first in README at width 160, above the project title and badges, and include it in the package. Follow [Artwork](DESIGN.md#artwork) for provenance, editing, temporary rendering commands, and full-size/README-size inspection; do not replace the source with a generated preview.
+Preserve the original editable `assets/logo.svg`, its MIT license, and its accessible title/description. Keep the logo first in README at width 160, above the project title and badges, and include it in the package. The animated variation uses `assets/stamp.svg` and `scripts/render-logo.js`; keep the green logo stationary at its original scale, move only the simple transparent green outline stamper, and retain the static reduced-motion fallback. Regenerate the GIF after source changes. Follow [Artwork](DESIGN.md#artwork) for provenance, editing, rendering commands, and full-size/README-size inspection; do not replace editable sources with generated previews.
 
 ## Git and GitHub
 

@@ -1,4 +1,7 @@
-<img src="assets/logo.svg" alt="Green rubber stamp reading Already Tested with a check mark" width="160">
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/logo.svg">
+  <img src="assets/logo-animated.gif" alt="A transparent green outline stamper moves over the stationary Already Tested logo" width="160">
+</picture>
 
 # already-tested
 

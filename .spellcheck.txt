@@ -8,6 +8,7 @@ Changelog
 Coveralls
 ESLint
 ESM
+FFmpeg
 GitHub
 JavaScript
 JSON
