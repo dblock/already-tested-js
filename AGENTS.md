@@ -1,0 +1,43 @@
+# Working on already-tested
+
+Read [Contributing](CONTRIBUTING.md) and [Design](DESIGN.md) before editing. This project trusts content-matched local-test claims in PR descriptions to avoid duplicate CI. It does not prove execution, sign evidence, run tests for callers, or operate a remote service. This branch is a scaffold; claim generation and verification are not implemented.
+
+## Implementation and Tests
+
+Keep shared claim logic under `src/`, the CLI under `bin/`, behavior tests under `test/`, and validation utilities under `scripts/`. `action.yml` runs committed `dist/action.cjs`, rebuilt with `npm run build`. Use public dependency APIs and supported Node.js APIs. The Action targets Node.js 24; consumers support Node.js 24 and 26 or later; development uses Node.js 26 LTS.
+
+Bind claims to a versioned hash of selected committed files, file paths, selection policy, workflow, and check identity. Include the workflow regardless of file filters. Match the PR head, not a dirty tree or default synthetic merge checkout. Do not execute claim text, silently ignore unsupported inputs, trust a hash for a different check, or turn missing/malformed/stale evidence into a skip.
+
+Keep adapters thin and add focused behavior tests plus real Git/CLI/installed-consumer fixtures. During implementation, aim for near-complete project-owned runtime coverage and inspect line/branch gaps with `npm run test:coverage`; do not exclude real code or inflate coverage with trivial assertions. Scaffold coverage includes placeholders and is not claim-functionality coverage.
+
+## Validation and Maintenance
+
+Install with `npm ci`. Run `npm run test:coverage` and `npm run lint` locally before every development push. Run final validation immediately before committing, reusing results only for unchanged content and configuration. Use `npm test -- --test-name-pattern="<pattern>"` for focused tests. Run `npm run package:check` before committing when packaging, entry points, metadata, or the bundle changes; it validates an actual packed consumer with strict engines. Rebuild and commit the Action bundle when its source changes.
+
+Verify and prefer latest stable dependencies, runtimes, and Actions when selecting or updating them, while preserving supported-runtime compatibility. Do not relax consumer engine requirements to accommodate development tools.
+
+Keep Test, Lint, and Package in separate workflows and maintain Coveralls reporting. Matrices use `matrix.entry` arrays of compact inline objects, never include/exclude or generated axes.
+
+Use title case for human-readable Markdown headings and YAML workflow/job/step names, preserving proper names, acronyms, and identifiers. Keep Markdown prose on one source line. `npm run lint` includes ESLint checks for code, embedded JavaScript, Markdown style, headings, spelling, and a YAML-aware display-name checker. Review additions to `.spellcheck.txt` rather than suppressing spelling errors.
+
+Update affected documentation and keep Design focused on current behavior and relevant rationale, not diaries or superseded proposals. Add linked changelog entries for meaningful features, improvements, and fixes, not minor typos or the initial scaffold. Predict the next PR number, verify it after opening, and correct discrepancies. Entries use `- [#123](https://github.com/dblock/already-tested/pull/123): Description - [@author](https://github.com/author).` Append oldest-to-newest immediately above `- Your contribution here.` in the Next section.
+
+## Git and GitHub
+
+Use topic branches from `master` named `<username>/<topic>`, such as `dblock/implementation`, in the existing checkout. Worktrees are only for parallel tasks; use unused paths. Inspect status and worktrees before switching and preserve unrelated changes.
+
+Prefer one coherent commit per PR; allow independently reviewable commits when useful. Prefer squash merges; rebase merges are also allowed, merge commits are not. No direct default-branch development commits/pushes, no force-push to `master`, and no merge, publication, credential setup, or tags/releases without explicit authorization.
+
+Amend or squash task-owned PR commits without asking again. Verify ownership and record the remote tip before rewriting, reconcile remote changes, validate locally, then push with `--force-with-lease` against the recorded SHA. Never use plain force or rewrite another task's work.
+
+Include the Copilot co-author trailer on AI-assisted commits and disclose AI authorship on behalf of `@dblock` on AI-authored PRs/comments. Let PR closing references close issues on merge instead of manually closing them.
+
+Do not wait idle for CI after local checks pass for the exact pushed revision; report pending checks and inspect them during the next relevant task. After merges, fetch with pruning and verify the PR's merged state via GitHub. Inspect dirty worktrees and stacked dependencies; switch clean checkouts to `master`, remove clean task-created parallel worktrees, and delete merged local topic branches. Force-delete a local branch only after verifying the merge and absence of unmerged work or dependents. Never delete dirty worktrees, active PR branches, or `master`.
+
+## Versioning and Releases
+
+Before any version bump, verify the current registry release; ask if release status is uncertain. Keep an unreleased version unchanged, including the initial `0.1.0`. After a release, include the bump in the change PR. Features increment minor, resetting patch for `0.x` and preserving patch for `1.x` and later. Breaking changes in `0.x` increment minor and reset patch without requesting a major; ask before a major bump for breaking changes in `1.x` and later. Synchronize manifest, lockfile, and Next changelog heading.
+
+Document released breaking behavior and migration in `UPGRADING.md` in the same PR, including `0.x`; link it from README, identify the source and target releases, give before/after examples, and link the introducing PR.
+
+Release instructions are provisional; see [Releasing](RELEASING.md). The first npm release is planned as a manually authorized `0.1.0` publication of the inspected tarball. Only after confirming it in npm should a focused PR configure npm Trusted Publishing with OIDC for subsequent releases. Publication, interactive authentication, publisher setup, tags/releases, and dispatch each require explicit authorization. Never store long-lived npm tokens or overwrite a published version or release tag.

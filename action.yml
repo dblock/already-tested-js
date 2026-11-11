@@ -1,0 +1,19 @@
+name: Already Tested
+description: Skip duplicate tests using trusted, content-matched PR claims. Not implemented yet.
+author: dblock
+inputs:
+  check:
+    description: Identifier of the check whose local result is claimed.
+    required: true
+  files:
+    description: Optional newline-separated Git path patterns; defaults to all tracked files.
+    required: false
+outputs:
+  skip:
+    description: Whether a trusted claim matches the selected source and workflow.
+runs:
+  using: node24
+  main: dist/action.cjs
+branding:
+  icon: check-circle
+  color: green
