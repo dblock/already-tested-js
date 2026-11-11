@@ -6,7 +6,9 @@ Claims in PR descriptions let trusted agents avoid duplicate tests against match
 
 ## Public Interface
 
-One ESM package provides the CLI, shared `src/` logic, and bundled Action in `dist/action.cjs`, declared by `action.yml`. Runtime dependencies: Git 2.29+ and public Node.js APIs only. The Action uses Node.js 24; consumers support Node.js 24.x or 26+; development uses Node.js 26.
+Public integrations use the `already-tested` executable or `dblock/already-tested@<ref>`, not `node`, `npx`, or repository script paths. Project languages, test commands, and environment descriptions are independent of the tool's implementation language.
+
+Preserve CLI arguments, stdout/stderr, exit codes, claim/hash compatibility, and Action inputs/outputs when changing distribution or replacing JavaScript with a binary. Runtime and packaging are implementation details; standalone binaries and automatic runtime installation are not implemented yet.
 
 The CLI generates claims after local validation. It does not run tests, post to GitHub, or require credentials. The Action reads the event's PR description/head and identifies the executing workflow through `GITHUB_WORKFLOW_REF` and `GITHUB_WORKFLOW_SHA`.
 
@@ -15,7 +17,7 @@ Action inputs: required `check`, optional newline-separated `files`. Output: str
 ## CLI and Claim Format
 
 ```sh
-node ../already-tested/bin/already-tested.js claim --workflow .github/workflows/test.yml --check unit
+already-tested claim --workflow .github/workflows/test.yml --check unit
 ```
 
 Workflow and filter paths are repository-relative, even when invoking from a subdirectory. `--workflow` must be a tracked `.yml`/`.yaml` file directly under `.github/workflows/`. Check identifiers contain 1-128 ASCII letters, numbers, periods, underscores, colons, slashes, or hyphens, starting with a letter or number.
@@ -32,7 +34,7 @@ Workflow and filter paths are repository-relative, even when invoking from a sub
 
 Default output is one expandable `details` section with bulleted command/environment when supplied, workflow, check, commit, and content SHA-256. The canonical comment is hidden inline beside the hash. Sections concatenate without blank separators or outer bullets; GitHub controls visual margins.
 
-Display metadata must be nonempty, single-line, and NUL-free. Summary HTML is escaped; detail values use safe code delimiters. Metadata is trusted prose, not a hash input or proof of execution.
+Display metadata must be nonempty, single-line, and NUL-free. The environment describes the tested project's toolchain/OS, not the CLI runtime. Summary HTML is escaped; detail values use safe code delimiters. Metadata is trusted prose, not a hash input or proof of execution.
 
 Success writes only the section/comment and a final newline to stdout, exiting zero. Errors write to stderr, exit one, and produce no claim. Help/version require no repository.
 
@@ -51,7 +53,7 @@ Default: all tracked files. Filters use Git pathspecs, not shell expansion. Both
 For example:
 
 ```sh
-node ../already-tested/bin/already-tested.js claim --workflow .github/workflows/test.yml --check unit \
+already-tested claim --workflow .github/workflows/test.yml --check unit \
   --files 'src/**' --files 'test/**'
 ```
 
@@ -108,6 +110,8 @@ verifyClaim({
 Both functions are synchronous and accept optional `cwd` and `files`. `createClaim` requires clean tracked HEAD and returns the canonical comment. `verifyClaim` returns a boolean without requiring a clean checkout; `ref` selects source (default HEAD), and `workflowRef` selects the executing workflow (default source ref). Explicit refs must be full lowercase 40- or 64-character commit IDs. Errors throw; absent/non-claim bodies return false without Git access.
 
 ## Dependencies and Layout
+
+The current ESM package provides shared `src/` logic, a CLI registered through the package's `bin` mapping, and bundled Action `dist/action.cjs` declared by `action.yml`. Runtime dependencies are Git 2.29+ and public Node.js APIs only. Local installation currently requires Node.js 24.x or 26+; GitHub provides Node.js 24 for the Action. Development uses Node.js 26.
 
 Tests live under `test/`, real-Git/consumer fixtures under `test-support/`, and utilities under `scripts/`. CLI and Action adapters share claim logic.
 
