@@ -32,8 +32,8 @@ try {
     "pack", "--json", "--pack-destination", temporary,
   ], root));
   const names = packed.files.map((file) => file.path);
-  for (const path of ["action.yml", "bin/already-tested.js", "dist/action.cjs", "src/index.js"]) {
-    assert.ok(names.includes(path), `Missing packaged entry point: ${path}`);
+  for (const path of ["action.yml", "assets/logo.svg", "bin/already-tested.js", "dist/action.cjs", "src/index.js"]) {
+    assert.ok(names.includes(path), `Missing packaged file: ${path}`);
   }
   assert.ok(!names.some((path) => /^(?:node_modules|coverage|test|test-support|scripts)\//u.test(path)));
   const consumer = join(temporary, "consumer");

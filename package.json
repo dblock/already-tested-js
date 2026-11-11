@@ -17,6 +17,7 @@
   },
   "files": [
     "action.yml",
+    "assets/logo.svg",
     "bin/",
     "dist/",
     "src/",

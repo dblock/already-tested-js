@@ -93,6 +93,21 @@ Use esbuild for bundling, the built-in Node.js test runner with c8 coverage, ESL
 
 No signing, independent execution proof, test-runner adapters, automatic test selection, remote service, registry credentials, automated PR editing, or claim-based skipping for this project's own CI.
 
+## Artwork
+
+The approved Rubber Stamp concept is original editable SVG artwork in `assets/logo.svg`, covered by the project's [MIT license](LICENSE). No third-party artwork or embedded font files are used. The green ink, broken double-ring border, tilted lettering, and check mark represent a trusted claim that work was already done, not an independent certification.
+
+Edit the SVG source directly. Preserve its accessible title/description, transparent background, system-font fallback, and generous outer margin. Keep it first in README, above the title and badges, using an image with descriptive alternative text and a 160-pixel display width. Include the SVG in the npm archive so packaged README images resolve.
+
+Create temporary previews with `rsvg-convert` from `librsvg`:
+
+```sh
+rsvg-convert --width 256 --height 256 --output /tmp/already-tested-logo-full.png assets/logo.svg
+rsvg-convert --width 160 --height 160 --output /tmp/already-tested-logo-readme.png assets/logo.svg
+```
+
+Inspect both sizes for readable lettering, a clear check mark, and borders without clipping. Verify the rendered README preserves the logo/title/badges order and declared width. Keep preview files outside the package, remove only previews created for the task, and retain the editable source and license when updating artwork.
+
 ## Maintenance
 
 Keep this document focused on current behavior, the agreed interface, and relevant constraints. Remove superseded proposals and implementation diaries; Git history preserves past decisions.
