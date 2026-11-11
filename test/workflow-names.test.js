@@ -74,5 +74,3 @@ test("CLI checks YAML files and reports names and parse errors", async () => {
     await rm(directory, { recursive: true, force: true });
   }
 });
-
-test.todo("Generate and verify content-matched PR claims in the implementation PR");

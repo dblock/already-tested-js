@@ -10,6 +10,7 @@ ESLint
 ESM
 GitHub
 JavaScript
+JSON
 LCOV
 LTS
 Markdown
@@ -20,6 +21,9 @@ PRs
 README
 RSpec
 SHA
+Symlinks
+UTF
+Untracked
 YAML
 Worktrees
 bundler
@@ -28,7 +32,9 @@ checksum
 checksums
 codebase
 dblock
+deduplicate
 esbuild
+executables
 filesystem
 functionality
 hashes
@@ -58,4 +64,5 @@ tarballs
 toolchain
 toolchains
 untracked
+unstaged
 worktrees

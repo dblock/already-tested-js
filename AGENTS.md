@@ -1,14 +1,14 @@
 # Working on already-tested
 
-Read [Contributing](CONTRIBUTING.md) and [Design](DESIGN.md) before editing. This project trusts content-matched local-test claims in PR descriptions to avoid duplicate CI. It does not prove execution, sign evidence, run tests for callers, or operate a remote service. This branch is a scaffold; claim generation and verification are not implemented.
+Read [Contributing](CONTRIBUTING.md) and [Design](DESIGN.md) before editing. This project trusts content-matched local-test claims in PR descriptions to avoid duplicate CI. It does not prove execution, sign evidence, run tests for callers, or operate a remote service.
 
 ## Implementation and Tests
 
 Keep shared claim logic under `src/`, the CLI under `bin/`, behavior tests under `test/`, and validation utilities under `scripts/`. `action.yml` runs committed `dist/action.cjs`, rebuilt with `npm run build`. Use public dependency APIs and supported Node.js APIs. The Action targets Node.js 24; consumers support Node.js 24 and 26 or later; development uses Node.js 26 LTS.
 
-Bind claims to a versioned hash of selected committed files, file paths, selection policy, workflow, and check identity. Include the workflow regardless of file filters. Match the PR head, not a dirty tree or default synthetic merge checkout. Do not execute claim text, silently ignore unsupported inputs, trust a hash for a different check, or turn missing/malformed/stale evidence into a skip.
+Bind claims to a versioned hash of selected committed files, file paths/modes, selection policy, workflow, and check identity. Include the executing workflow regardless of filters, even when its commit differs from the PR head. Match source from the PR head, not a dirty tree or default synthetic merge checkout. Use isolated temporary Git indexes and committed blobs, never mutate the caller's index or execute claim text. Reject selected symlinks, submodules, invalid UTF-8, and attribute-based pathspecs. Never turn missing/malformed/stale evidence or operational errors into a skip.
 
-Keep adapters thin and add focused behavior tests plus real Git/CLI/installed-consumer fixtures. During implementation, aim for near-complete project-owned runtime coverage and inspect line/branch gaps with `npm run test:coverage`; do not exclude real code or inflate coverage with trivial assertions. Scaffold coverage includes placeholders and is not claim-functionality coverage.
+Keep adapters thin and add focused behavior tests plus real Git/CLI/installed-consumer fixtures. `test-support/consumer.js` exercises the same round trip against source and the actual installed archive. Aim for near-complete project-owned runtime coverage and inspect line/branch gaps with `npm run test:coverage`; do not exclude real code or inflate coverage with trivial assertions.
 
 ## Validation and Maintenance
 
