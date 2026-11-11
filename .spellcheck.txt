@@ -21,6 +21,7 @@ PRs
 README
 RSpec
 SHA
+SVG
 Symlinks
 UTF
 Untracked

@@ -22,6 +22,10 @@ Use title case for human-readable Markdown headings and YAML workflow/job/step n
 
 Update affected documentation and keep Design focused on current behavior and relevant rationale, not diaries or superseded proposals. Add linked changelog entries for meaningful features, improvements, and fixes, not minor typos or the initial scaffold. Predict the next PR number, verify it after opening, and correct discrepancies. Entries use `- [#123](https://github.com/dblock/already-tested/pull/123): Description - [@author](https://github.com/author).` Append oldest-to-newest immediately above `- Your contribution here.` in the Next section.
 
+## Artwork
+
+Preserve the original editable `assets/logo.svg`, its MIT license, and its accessible title/description. Keep the logo first in README at width 160, above the project title and badges, and include it in the package. Follow [Artwork](DESIGN.md#artwork) for provenance, editing, temporary rendering commands, and full-size/README-size inspection; do not replace the source with a generated preview.
+
 ## Git and GitHub
 
 Use topic branches from `master` named `<username>/<topic>`, such as `dblock/implementation`, in the existing checkout. Worktrees are only for parallel tasks; use unused paths. Inspect status and worktrees before switching and preserve unrelated changes.
