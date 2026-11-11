@@ -28,6 +28,8 @@ Follow [validation and test conventions](CONTRIBUTING.md#setup-and-validation), 
 
 Keep prose concise, precise, and on one source line per paragraph. Use title-case headings/display names and review spelling additions. Link shared instructions instead of repeating them; document current behavior, not implementation diaries.
 
+Use the [public CLI/Action interfaces](DESIGN.md#public-interface) in user examples. Keep runtime commands and source paths confined to installation or repository development; describe tested project toolchains, not the tool's implementation language.
+
 Append meaningful changes above the Next changelog placeholder in linked PR/author format. Predict the PR number, then verify it after opening. Minor typos and the initial scaffold need no entry.
 
 Preserve the editable MIT-licensed logo, accessibility, package inclusion, and first position in README at width 160. Follow [artwork instructions](DESIGN.md#artwork); do not replace source artwork with previews.
