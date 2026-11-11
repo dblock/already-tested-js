@@ -1,0 +1,32 @@
+name: Package
+on:
+  push:
+    branches: [master]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  package:
+    name: Validate Package on Node.js ${{ matrix.entry.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        entry:
+          - { node: '24' }
+          - { node: '26' }
+    steps:
+      - name: Check Out Source
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set Up Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: ${{ matrix.entry.node }}
+          cache: npm
+      - name: Install Dependencies
+        run: npm ci
+      - name: Validate Packed Consumer
+        run: npm run package:check
+      - name: Verify Committed Bundle
+        run: git diff --exit-code -- dist/

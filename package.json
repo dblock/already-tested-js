@@ -1,0 +1,77 @@
+{
+  "name": "already-tested",
+  "version": "0.1.0",
+  "description": "Skip duplicate CI tests using trusted, content-matched claims in pull request descriptions.",
+  "type": "module",
+  "license": "MIT",
+  "author": "dblock",
+  "engines": {
+    "node": "^24.0.0 || >=26.0.0"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "already-tested": "./bin/already-tested.js"
+  },
+  "files": [
+    "action.yml",
+    "bin/",
+    "dist/",
+    "src/",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "DESIGN.md",
+    "README.md",
+    "RELEASING.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "esbuild src/action.js --bundle --platform=node --target=node24 --format=cjs --outfile=dist/action.cjs",
+    "test": "node --test",
+    "test:coverage": "c8 --reporter=text --reporter=lcov npm test",
+    "lint": "npm run lint:code && npm run lint:markdown && npm run lint:workflows",
+    "lint:code": "eslint .",
+    "lint:markdown": "eslint --config eslint.config-markdown.js \"*.md\"",
+    "lint:workflows": "node scripts/check-workflow-names.js",
+    "package:check": "node scripts/check-package.js",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@cspell/dict-en_us": "^4.4.43",
+    "@eslint/js": "^10.0.1",
+    "@eslint/markdown": "^8.0.3",
+    "c8": "^12.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.14.0",
+    "eslint-plugin-markdown-preferences": "^0.43.0",
+    "eslint-plugin-markdown-preferences-paragraph": "^0.2.0",
+    "eslint-plugin-prose-spellcheck": "^0.1.2",
+    "title-case": "^4.3.2",
+    "yaml": "^2.9.1"
+  },
+  "c8": {
+    "all": true,
+    "include": [
+      "src/**/*.js",
+      "bin/**/*.js",
+      "scripts/**/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dblock/already-tested.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dblock/already-tested/issues"
+  },
+  "homepage": "https://github.com/dblock/already-tested#readme",
+  "keywords": [
+    "github-actions",
+    "ci",
+    "testing",
+    "agents"
+  ]
+}
