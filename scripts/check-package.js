@@ -4,7 +4,9 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import process from "node:process";
+import { pathToFileURL } from "node:url";
 import { parse } from "yaml";
+import { exerciseConsumer } from "../test-support/consumer.js";
 
 const root = resolve(import.meta.dirname, "..");
 const temporary = await mkdtemp(join(tmpdir(), "already-tested-package-"));
@@ -33,7 +35,7 @@ try {
   for (const path of ["action.yml", "bin/already-tested.js", "dist/action.cjs", "src/index.js"]) {
     assert.ok(names.includes(path), `Missing packaged entry point: ${path}`);
   }
-  assert.ok(!names.some((path) => /^(?:node_modules|coverage|test|scripts)\//u.test(path)));
+  assert.ok(!names.some((path) => /^(?:node_modules|coverage|test|test-support|scripts)\//u.test(path)));
   const consumer = join(temporary, "consumer");
   await mkdir(consumer);
   await writeFile(join(consumer, "package.json"), JSON.stringify({
@@ -48,16 +50,12 @@ try {
   run(process.execPath, ["--input-type=module", "-e", "await import('already-tested')"], consumer);
   const installed = join(consumer, "node_modules", "already-tested");
   const action = parse(await readFile(join(installed, "action.yml"), "utf8"));
-  for (const path of ["bin/already-tested.js", action.runs.main]) {
-    const result = spawnSync(process.execPath, [join(installed, path)], {
-      cwd: consumer,
-      encoding: "utf8",
-    });
-    assert.ifError(result.error);
-    assert.equal(result.status, 1, `${path} must not claim to implement functionality.`);
-    assert.match(result.stderr, /already-tested is not implemented yet/u);
-  }
-  process.stdout.write("Packed consumer import and scaffold CLI/Action checks passed.\n");
+  exerciseConsumer({
+    library: await import(pathToFileURL(join(installed, "src/index.js")).href),
+    cli: join(installed, "bin/already-tested.js"),
+    action: join(installed, action.runs.main),
+  });
+  process.stdout.write("Packed consumer API, CLI, and bundled Action checks passed.\n");
 } finally {
   await rm(temporary, { recursive: true, force: true });
 }

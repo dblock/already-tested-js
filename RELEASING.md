@@ -2,7 +2,7 @@
 
 ## Status
 
-Provisional instructions only. The project is not released, functionality is not implemented, and no release automation, trusted publisher, credentials, or tags are configured. These instructions do not authorize any release action.
+Provisional instructions only. The project is not released, and no release automation, trusted publisher, credentials, or tags are configured. These instructions do not authorize any release action.
 
 ## Version and Validation
 

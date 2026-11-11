@@ -1,1 +1,1 @@
-export {};
+export { createClaim, verifyClaim } from "./claims.js";

@@ -1,12 +1,12 @@
 name: Already Tested
-description: Skip duplicate tests using trusted, content-matched PR claims. Not implemented yet.
+description: Skip duplicate tests using trusted, content-matched claims in PR descriptions.
 author: dblock
 inputs:
   check:
     description: Identifier of the check whose local result is claimed.
     required: true
   files:
-    description: Optional newline-separated Git path patterns; defaults to all tracked files.
+    description: Optional newline-separated Git path patterns; defaults to all tracked files and always includes the workflow.
     required: false
 outputs:
   skip:
