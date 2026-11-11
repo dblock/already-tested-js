@@ -63,12 +63,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dblock/already-tested.git"
+    "url": "git+https://github.com/dblock/already-tested-js.git"
   },
   "bugs": {
-    "url": "https://github.com/dblock/already-tested/issues"
+    "url": "https://github.com/dblock/already-tested-js/issues"
   },
-  "homepage": "https://github.com/dblock/already-tested#readme",
+  "homepage": "https://github.com/dblock/already-tested-js#readme",
   "keywords": [
     "github-actions",
     "ci",

@@ -6,7 +6,7 @@ Claims in PR descriptions let trusted agents avoid duplicate tests against match
 
 ## Public Interface
 
-Public integrations use the `already-tested` executable or `dblock/already-tested@<ref>`, not `node`, `npx`, or repository script paths. Project languages, test commands, and environment descriptions are independent of the tool's implementation language.
+Public integrations use the `already-tested` executable or `dblock/already-tested-js@<ref>`, not `node`, `npx`, or repository script paths. Project languages, test commands, and environment descriptions are independent of the tool's implementation language.
 
 Preserve CLI arguments, stdout/stderr, exit codes, claim/hash compatibility, and Action inputs/outputs when changing distribution or replacing JavaScript with a binary. Runtime and packaging are implementation details; standalone binaries and automatic runtime installation are not implemented yet.
 
