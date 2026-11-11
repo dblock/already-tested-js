@@ -1,8 +1,10 @@
 <img src="assets/logo.svg" alt="Green rubber stamp reading Already Tested with a check mark" width="160">
 
-# already-tested
+# already-tested-js
 
-[![Test](https://github.com/dblock/already-tested/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/already-tested/actions/workflows/test.yml) [![Lint](https://github.com/dblock/already-tested/actions/workflows/lint.yml/badge.svg)](https://github.com/dblock/already-tested/actions/workflows/lint.yml) [![Package](https://github.com/dblock/already-tested/actions/workflows/package.yml/badge.svg)](https://github.com/dblock/already-tested/actions/workflows/package.yml)
+[![Test](https://github.com/dblock/already-tested-js/actions/workflows/test.yml/badge.svg)](https://github.com/dblock/already-tested-js/actions/workflows/test.yml) [![Lint](https://github.com/dblock/already-tested-js/actions/workflows/lint.yml/badge.svg)](https://github.com/dblock/already-tested-js/actions/workflows/lint.yml) [![Package](https://github.com/dblock/already-tested-js/actions/workflows/package.yml/badge.svg)](https://github.com/dblock/already-tested-js/actions/workflows/package.yml)
+
+JavaScript implementation. The Rust successor lives at [already-tested](https://github.com/dblock/already-tested). The CLI command remains `already-tested`.
 
 Skip duplicate CI tests when a trusted local run matches the committed source and workflow. **Claims are not proof that tests ran.**
 
@@ -13,8 +15,8 @@ Use your project's existing checks, in any language.
 Git 2.29+ is required. Until standalone distribution is available, install the unreleased CLI from source using Node.js 24.x or 26+ and npm:
 
 ```sh
-git clone https://github.com/dblock/already-tested.git ../already-tested
-npm install --global --ignore-scripts ../already-tested
+git clone https://github.com/dblock/already-tested-js.git ../already-tested-js
+npm install --global --ignore-scripts ../already-tested-js
 ```
 
 This installs `already-tested` on your PATH, outside your project's dependencies. Node/npm are current installation details; the command stays the same with a future binary.
@@ -39,7 +41,7 @@ jobs:
         with:
           fetch-depth: 2
           persist-credentials: false
-      - uses: dblock/already-tested@master
+      - uses: dblock/already-tested-js@master
         id: tested
         with:
           check: test-linux

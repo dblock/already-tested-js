@@ -17,7 +17,7 @@ export default [{
     "preferences/heading-casing": ["error", {
       style: "Title Case",
       preserveWords: [
-        "already-tested", "AGENTS.md", "JavaScript", "Node.js", "GitHub",
+        "already-tested", "already-tested-js", "AGENTS.md", "JavaScript", "Node.js", "GitHub",
         "CLI", "CI", "PR", "PRs", "SHA-256", "API", "MIT", "ESLint", "npm",
       ],
     }],
