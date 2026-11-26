@@ -9,4 +9,5 @@
 - [#7](https://github.com/dblock/already-tested-js/pull/7): Match the logo to CI badge green - [@dblock](https://github.com/dblock).
 - [#8](https://github.com/dblock/already-tested-js/pull/8): Define runtime-independent CLI usage and language-neutral integration examples - [@dblock](https://github.com/dblock).
 - [#9](https://github.com/dblock/already-tested-js/pull/9): Update repository references after renaming the JavaScript implementation - [@dblock](https://github.com/dblock).
+- [#10](https://github.com/dblock/already-tested-js/pull/10): Upgrade `@eslint/markdown` to 9.0.0, overriding Markdown lint plugin peer ranges until they support it - [@dblock](https://github.com/dblock).
 - Your contribution here.
